@@ -74,6 +74,7 @@ function LocationsList({ seed }) {
         } else {
           parseData(lastMessage.data)
         }
+        // eslint-disable-next-line
     }, [lastMessage])
 
     const setCheckState = (client, index, checked) => {
