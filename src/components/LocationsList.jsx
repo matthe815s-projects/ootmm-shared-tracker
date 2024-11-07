@@ -71,10 +71,10 @@ function LocationsList({ seed }) {
           stringifyBlob(lastMessage.data).then((data) => {
             parseData(data)
           });
-        } else { 
+        } else {
           parseData(lastMessage.data)
         }
-    }, [lastMessage, checkedBoxes])
+    }, [lastMessage])
 
     const setCheckState = (client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
