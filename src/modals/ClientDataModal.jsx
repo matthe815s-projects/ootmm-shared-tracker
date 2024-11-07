@@ -3,13 +3,13 @@ import { useState } from "react";
 import UsernameContext from "../contexts/UsernameContext";
 
 function ClientDataModal({ show, setShow }) {
-    const [socketUrl, setSocketUrl] = useState(localStorage.socket ?? `ws://${/https?:\/\/([\w\d\.\-_!@#$%^&*()]*)?/g.exec(window.location.href)[1]}:8080`)
+    const [socketUrl, setSocketUrl] = useState(localStorage.socket ?? `ws://${/https?:\/\/([\w\d.\-_!@#$%^&*()]*)?/g.exec(window.location.href)[1]}:8080`)
 
     function onSetUsername(client) {
         localStorage.username = client.clientUsername
         localStorage.seed = client.seed
 
-        if (localStorage.socket != socketUrl) {
+        if (localStorage.socket !== socketUrl) {
             localStorage.socket = socketUrl
             window.location.reload()
         }
