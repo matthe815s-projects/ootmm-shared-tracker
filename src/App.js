@@ -1,9 +1,7 @@
-import { Button, Col, Container, Row } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import { stringifyBlob } from './utils/BlobUtils'
+import { Container, Row } from 'react-bootstrap';
+import { useState } from 'react';
 import LocationsList from './components/LocationsList';
 import UsernameContext from './contexts/UsernameContext';
-import WebsocketContext from './contexts/WebsocketContext';
 import ClientDataModal from './modals/ClientDataModal';
 import "./App.css"
 
@@ -18,7 +16,7 @@ function App() {
         <Container style={{ height: "100vh" }}>
           <Row style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             <h1 style={{ textAlign: "center" }}>OoTMM Shared Tracker</h1>
-            <a href="#" onClick={() => { setShow(true) }} style={{ textAlign: "center", color: "#aaa", marginBottom: "10px" }}>Logged in as {clientUsername} on {localStorage.socket}</a>
+            <button style={{ background: 'none', border: 'none' }} onClick={() => { setShow(true) }}>⚙</button>Logged in as {clientUsername} on {localStorage.socket}
             <LocationsList seed={seed} />
           </Row>
         </Container>

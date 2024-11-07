@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
 import UsernameContext from '../contexts/UsernameContext';
 
 function LocationCheck({ index, locationName, checkData, setCheckState }) {
-  const [checkedBy, setCheckedBy] = useState(null);
   if (!checkData) checkData = {}
 
   return (

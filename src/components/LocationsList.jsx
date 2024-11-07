@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
 import LocationsCategorized from "./CategoryList";
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import useWebSocket from 'react-use-websocket';
 
 let queue = []
 let queueAwait = false
@@ -14,7 +14,7 @@ function LocationsList({ seed }) {
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
 
-    let { sendMessage, lastMessage, socketState } = useWebSocket(localStorage.socket || 'ws://localhost:8080', {
+    let { sendMessage, lastMessage } = useWebSocket(localStorage.socket || 'ws://localhost:8080', {
       onOpen: () => sendMessage(JSON.stringify({ op: 0, seed }))
     });
 
@@ -60,6 +60,9 @@ function LocationsList({ seed }) {
                 setCheckedBoxes(newCheckedBoxes);
                 queueAwait = false
                 return
+            default:
+                console.log("Invalid packet received.")
+                break;
           }
           if (queueAwait) queue.push(message)
         }
@@ -71,7 +74,7 @@ function LocationsList({ seed }) {
         } else { 
           parseData(lastMessage.data)
         }
-    }, [lastMessage])
+    }, [lastMessage, checkedBoxes])
 
     const setCheckState = (client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
@@ -84,7 +87,7 @@ function LocationsList({ seed }) {
     const categorizeLocations = () => {
         const categories = []
         const each = (location, index) => {
-            const category = categories.find((category) => category.name == location.area)
+            const category = categories.find((category) => category.name === location.area)
             location.index = index
             if (!category) {
                 categories.push({ name: location.area, color: location.color, locations: [location] })
@@ -110,7 +113,7 @@ function LocationsList({ seed }) {
     return (
         <Col style={{ height: "100%", overflowY: "scroll" }}>
             {<input type="text" className="Search-bar" placeholder="Search" value={search} onChange={(e) => { setSearch(e.target.value) }} />}<br />
-            {categorizeLocations().map((category) => <LocationsCategorized category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search == ""} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)}
+            {categorizeLocations().map((category) => <LocationsCategorized category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)}
         </Col>
     )
 }
