@@ -28,7 +28,7 @@ jobs:
                 key: ${{ secrets.KEY }}
                 script: |
                     cd ~
-                    git clone git@github.com:bendevnull/ootmm-shared-tracker.git
+                    git clone https://github.com/bendevnull/ootmm-shared-tracker.git
                     cd ootmm-shared-tracker
                     npm install
                     npm run build
