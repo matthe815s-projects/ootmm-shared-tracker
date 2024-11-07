@@ -1,0 +1,51 @@
+name: Deploy
+on: [push]
+
+jobs:
+    clean: 
+        name: Clean
+        runs-on: ubuntu-latest
+        steps:
+          - name: executing remote ssh commands using password
+            uses: appleboy/ssh-action@v1.1.0
+            with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
+                script: |
+                    rm -rf /var/www/html/*
+                    echo "Cleaned web directory"
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        steps:
+          - name: executing remote ssh commands using password
+            uses: appleboy/ssh-action@v1.1.0
+            with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
+                script: |
+                    cd ~
+                    git clone git@github.com:bendevnull/ootmm-shared-tracker.git
+                    cd ootmm-shared-tracker
+                    npm install
+                    npm run build
+                    echo "Build completed"
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        steps:
+          - name: executing remote ssh commands using password
+            uses: appleboy/ssh-action@v1.1.0
+            with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                key: ${{ secrets.KEY }}
+                script: |
+                    cd ~
+                    cp -r ootmm-shared-tracker/build/* /var/www/html/
+                    cp ootmm-shared-tracker/server.js /opt/tracker-server/
+                    service tracker-server restart
+                    echo "Deployed"
+            
