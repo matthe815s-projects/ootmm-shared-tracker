@@ -71,10 +71,11 @@ function LocationsList({ seed }) {
           stringifyBlob(lastMessage.data).then((data) => {
             parseData(data)
           });
-        } else { 
+        } else {
           parseData(lastMessage.data)
         }
-    }, [lastMessage, checkedBoxes])
+        // eslint-disable-next-line
+    }, [lastMessage])
 
     const setCheckState = (client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
