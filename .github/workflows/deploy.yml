@@ -46,6 +46,6 @@ jobs:
                     cd ~
                     cp -r ootmm-shared-tracker/build/* /var/www/html/
                     cp ootmm-shared-tracker/server.js /opt/tracker-server/
-                    service tracker-server restart
+                    pm2 restart tracker-server
                     echo "Deployed"
             
