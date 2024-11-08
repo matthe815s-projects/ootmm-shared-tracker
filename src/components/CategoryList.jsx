@@ -21,7 +21,7 @@ const LocationsCategorized = React.memo(({ category, search, setCheckState, filt
                   {!isCollapsed && <LocationCheck key={index} index={location.index} locationName={location} checkData={checkedBoxes[location.index]} setCheckState={setCheckState} />}
             </React.Fragment>
         )
-    }, [search, filter, checkedBoxes, isCollapsed, category, setCheckState])
+    }, [search, filter, checkedBoxes, isCollapsed, setCheckState])
 
     const totalCompleted = useMemo(() => category.locations.filter((location) => checkedBoxes[location.index]?.checked).length, [category.locations, checkedBoxes])
     const numberCleared = totalCompleted === category.locations.length ? <span>Fully Cleared</span> : <span>{totalCompleted} / {category.locations.length} complete</span>
