@@ -130,3 +130,15 @@
   width: 50%;
   height: 100%;
 }
+
+@media only screen and (max-width: 600px) {
+  .modal-dialog {
+    width: 100%!important;
+  }
+  .col {
+    width: 100%!important;
+  }
+  .Location label b {
+    display: none;
+  }
+}
