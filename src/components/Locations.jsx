@@ -97,7 +97,7 @@ function Locations({ isLoaded, locations, webSocket }) {
         setCollapsed(newCollapsed)
     }, [collapsed])
 
-    const mapToCategory = React.useCallback((category) => <Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />, [search, collapsed, filter, checkedBoxes, setCheckState, collapseCategory])
+    const mapToCategory = React.useCallback((category, index) => <Locations.Category key={index} category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />, [search, collapsed, filter, checkedBoxes, setCheckState, collapseCategory])
 
     if (!isLoaded) return <Locations.Lazy />
     return (

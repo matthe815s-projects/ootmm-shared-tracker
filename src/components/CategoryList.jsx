@@ -16,7 +16,7 @@ const LocationsCategorized = React.memo(({ category, search, setCheckState, filt
 
         const showCategoryLabel = !isCollapsed && (index === 0 || category !== array[index - 1].category);
         return (
-            <React.Fragment>
+            <React.Fragment key={index}>
                   {showCategoryLabel && <label className="NodeName"><b>{location.category}</b></label>}
                   {!isCollapsed && <LocationCheck key={index} index={location.index} locationName={location} checkData={checkedBoxes[location.index]} setCheckState={setCheckState} />}
             </React.Fragment>
