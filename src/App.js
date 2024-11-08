@@ -1,5 +1,5 @@
 import { Container, Row } from 'react-bootstrap';
-import {memo, useEffect, useState} from 'react';
+import {memo, Suspense, useEffect, useState} from 'react';
 import Locations from './components/Locations';
 import UsernameContext from './contexts/UsernameContext';
 import ClientDataModal from './modals/ClientDataModal';
@@ -49,7 +49,9 @@ function App() {
           <Row style={{ height: "100%", display: "flex", alignItems: "center", flexDirection: "column" }}>
             <h1 className="site-header" style={{ textAlign: "center" }}>OoTMM Shared Tracker</h1>
             <LoggedInMemo username={localStorage.username} socket={localStorage.socket} seed={localStorage.seed} />
-            <Locations locations={locations} isLoaded={locationsLoaded} webSocket={{ sendMessage, lastMessage }} />
+            <Suspense fallback={<p>Loading</p>}>
+              <Locations locations={locations} isLoaded={locationsLoaded} webSocket={{ sendMessage, lastMessage }} />
+            </Suspense>
           </Row>
         </Container>
       </WebsocketContext.Provider>

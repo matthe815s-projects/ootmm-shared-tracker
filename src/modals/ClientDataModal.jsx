@@ -25,12 +25,12 @@ function ClientDataModal({ show, setShow }) {
                     </Modal.Header>
 
                     <Modal.Body style={{ backgroundColor: "#36393e", color: "white" }}>
-                        <label className="Modal-label">Username</label><br />
-                        {<input className="Search-bar" type="text" placeholder="Set your display name" value={client.clientUsername} onChange={(e) => {client.setClientUsername(e.target.value)}} />}<br />
-                        <label className="Modal-label">Seed</label><br />
-                        {<input className="Search-bar" type="text" placeholder="Set your seed" value={client.seed} onChange={(e) => {client.setSeed(e.target.value)}} />}
-                        <label className="Modal-label">Socket URL</label><br />
-                        {<input className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
+                        <label htmlFor="username"  className="Modal-label">Username</label><br />
+                        {<input id="username" className="Search-bar" type="text" placeholder="Set your display name" value={client.clientUsername} onChange={(e) => {client.setClientUsername(e.target.value)}} />}<br />
+                        <label htmlFor="seed" className="Modal-label">Seed</label><br />
+                        {<input id="seed" className="Search-bar" type="text" placeholder="Set your seed" value={client.seed} onChange={(e) => {client.setSeed(e.target.value)}} />}
+                        <label htmlFor="socket" className="Modal-label">Socket URL</label><br />
+                        {<input id="socket" className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
                     </Modal.Body>
 
                     <Modal.Footer style={{ backgroundColor: "#1e2124", border: "none", display: "flex" }}>

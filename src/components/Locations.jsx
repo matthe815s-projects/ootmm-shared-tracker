@@ -1,8 +1,8 @@
-import {forwardRef, useEffect, useRef, useState} from "react";
+import {lazy, useEffect, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
-import LocationsCategorized from "./CategoryList";
-import LocationCheck from "./LocationCheck";
+
+Locations.Category = lazy(() => import('./CategoryList.jsx'));
 
 let queue = []
 let queueAwait = false
@@ -108,7 +108,6 @@ function Locations({ isLoaded, locations, webSocket }) {
     )
 }
 
-Locations.Category = LocationsCategorized
 Locations.Search = function searchField({ search }) {
     return (
       <input type="text" className="Search-bar" placeholder="Search" value={search.query} onChange={(e) => { search.setSearch(e.target.value) }} />

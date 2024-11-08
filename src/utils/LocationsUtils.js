@@ -23,6 +23,8 @@ function loadLocationsFromFile(locationJSON, locationsUrl) {
   return sections;
 }
 
-export default {
+const Locations = {
   fetchLocationFromUrl
 }
+
+export default Locations
