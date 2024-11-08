@@ -1,7 +1,6 @@
 import {lazy, useEffect, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
-import LocationCheck from "./LocationCheck";
 
 Locations.Category = lazy(() => import('./CategoryList.jsx'));
 Locations.Lazy = function lazyLocations() { return <div className="lazy-locations" /> }
