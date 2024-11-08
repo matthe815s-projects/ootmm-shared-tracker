@@ -111,3 +111,17 @@
   padding: 8px;
   color: white;
 }
+
+.logged-in button:hover {
+  color: white;
+  transform: rotate(360deg);
+  transition: 0.2s;
+}
+
+.site-header {
+  background-color: #1e2124;
+  width: 100%;
+  padding: 8px;
+  margin: 0;
+  color: white;
+}

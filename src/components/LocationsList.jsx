@@ -2,21 +2,16 @@ import { useEffect, useState } from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
 import LocationsCategorized from "./CategoryList";
-import useWebSocket from 'react-use-websocket';
 
 let queue = []
 let queueAwait = false
 
-function LocationsList({ seed }) {
+function LocationsList({ webSocket }) {
     const [checkedBoxes, setCheckedBoxes] = useState([{}]);
     const [locationsLoaded, setLocationsLoaded] = useState(false);
     const [locations, setLocations] = useState([]);
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
-
-    let { sendMessage, lastMessage } = useWebSocket(localStorage.socket || 'ws://localhost:8080', {
-      onOpen: () => sendMessage(JSON.stringify({ op: 0, seed }))
-    });
 
     useEffect(() => {
         Promise.all([
@@ -32,7 +27,7 @@ function LocationsList({ seed }) {
     }, [])
 
     useEffect(() => {
-        if (lastMessage === null) return
+        if (webSocket.lastMessage === null) return
 
         const parseData = (data) => {
           const message = JSON.parse(data);
@@ -67,22 +62,22 @@ function LocationsList({ seed }) {
           if (queueAwait) queue.push(message)
         }
 
-        if (lastMessage.data instanceof Blob) {
-          stringifyBlob(lastMessage.data).then((data) => {
+        if (webSocket.lastMessage.data instanceof Blob) {
+          stringifyBlob(webSocket.lastMessage.data).then((data) => {
             parseData(data)
           });
         } else {
-          parseData(lastMessage.data)
+          parseData(webSocket.lastMessage.data)
         }
         // eslint-disable-next-line
-    }, [lastMessage])
+    }, [webSocket.lastMessage])
 
     const setCheckState = (client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
         newCheckedBoxes[index] = { client, checked };
 
         setCheckedBoxes(newCheckedBoxes);
-        sendMessage(JSON.stringify({ op: 1, client, index, checked }));
+        webSocket.sendMessage(JSON.stringify({ op: 1, client, index, checked }));
     }
 
     const categorizeLocations = () => {
