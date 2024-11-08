@@ -1,31 +1,17 @@
-import { useEffect, useState } from "react";
+import {forwardRef, useEffect, useRef, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
 import LocationsCategorized from "./CategoryList";
+import LocationCheck from "./LocationCheck";
 
 let queue = []
 let queueAwait = false
 
-function LocationsList({ webSocket }) {
+function Locations({ isLoaded, locations, webSocket }) {
     const [checkedBoxes, setCheckedBoxes] = useState([{}]);
-    const [locationsLoaded, setLocationsLoaded] = useState(false);
-    const [locations, setLocations] = useState([]);
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
     const [filter, setFilter] = useState(0);
-
-    useEffect(() => {
-        Promise.all([
-            fetchLocationFromUrl("/oot_overworld.json"),
-            fetchLocationFromUrl("/oot_dungeons.json"),
-            fetchLocationFromUrl("/mm_overworld.json"),
-            fetchLocationFromUrl("/mm_dungeons.json")
-        ])
-            .then((data) => {
-                setLocations(data.flat())
-                setLocationsLoaded(true)
-            })
-    }, [])
 
     useEffect(() => {
         if (webSocket.lastMessage === null) return
@@ -105,47 +91,28 @@ function LocationsList({ webSocket }) {
         setCollapsed(newCollapsed)
     }
 
-    if (!locationsLoaded) return <p>Loading</p>
+    if (!isLoaded) return <p>Loading</p>
 
+    const mapToCategory = (category) => (<Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)
     return (
-        <Col style={{ height: "100%", overflowY: "scroll" }}>
-            {<input type="text" className="Search-bar" placeholder="Search" value={search} onChange={(e) => { setSearch(e.target.value) }} />}<br />
+      <Col style={{ height: "100%", width: "66%", overflowY: "scroll" }}>
+          <Locations.Search search={{ query: search, setSearch }} /><br />
 
-            {<select style={{ marginTop: "4px" }} onChange={(e) => setFilter(parseInt(e.target.value))} className="Search-bar">
-                <option value={"0"}>No filter</option>
-                <option value={"1"}>Only show unchecked</option>
-            </select>}
+          {<select style={{ marginTop: "4px" }} onChange={(e) => setFilter(parseInt(e.target.value))} className="Search-bar">
+              <option value={"0"}>No filter</option>
+              <option value={"1"}>Only show unchecked</option>
+          </select>}
 
-            {categorizeLocations().map((category) => <LocationsCategorized category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)}
-        </Col>
+          {categorizeLocations().map(mapToCategory)}
+      </Col>
     )
 }
 
-///
-
-function fetchLocationFromUrl(locationsUrl) {
-    return fetch(locationsUrl)
-        .then((locationJson) => locationJson.json())
-        .then((json) => loadLocationsFromFile(json[0].children ? json[0].children : json, locationsUrl))
+Locations.Category = LocationsCategorized
+Locations.Search = function searchField({ search }) {
+    return (
+      <input type="text" className="Search-bar" placeholder="Search" value={search.query} onChange={(e) => { search.setSearch(e.target.value) }} />
+    )
 }
 
-function loadLocationsFromFile(locationJSON, locationsUrl) {
-    let sections = []
-
-    const recurseLocation = (location, name, color) => {
-        if (location.children && Array.isArray(location.children)) {
-            location.children.forEach(child => recurseLocation(child, name, color));
-        }
-
-        if (location.sections && Array.isArray(location.sections)) {
-            location.sections = location.sections.map(loc => Object.assign(loc, { category: location.name, area: name, file: /\/([A-Z,a-z,0-9,\-,_]*).json/g.exec(locationsUrl)[1], color }));
-            sections = sections.concat(location.sections);
-        }
-    }
-
-    // console.log(locationJSON)
-    locationJSON.forEach(location => recurseLocation(location, location.name, location.color));
-    return sections;
-}
-
-export default LocationsList
+export default Locations
