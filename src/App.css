@@ -119,6 +119,16 @@
   transition: 0.2s;
 }
 
+::-webkit-scrollbar-track, ::-webkit-scrollbar {
+  background: none;
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1e2124;
+  border-radius: 8px;
+}
+
 .site-header {
   background-color: #1e2124;
   width: 100%;
