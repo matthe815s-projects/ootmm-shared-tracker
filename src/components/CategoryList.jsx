@@ -11,7 +11,7 @@ function LocationsCategorized({ category, search, setCheckState, filter, onClick
         const notSearchOrMatchesSearch = !isSearching || matchesNameOrCategory
         const isChecked = filter === 1 && (checkedBoxes[location.index] && checkedBoxes[location.index].checked)
 
-        if (isChecked) return <></>
+        if (isChecked) return
 
         return (notSearchOrMatchesSearch) &&
         <>

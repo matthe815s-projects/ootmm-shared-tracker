@@ -23,7 +23,7 @@ function App() {
         <h1 className="site-header" style={{ textAlign: "center" }}>OoTMM Shared Tracker</h1>
         <Container style={{ height: "100vh" }}>
           <Row style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-            <span className="logged-in"><button style={{ background: 'none', border: 'none' }} onClick={() => { setShow(true) }}>⚙</button>{readyState === ReadyState.CLOSED ? "Not connected" : `Logged in as ${clientUsername} on ${localStorage.socket}`}</span>
+            <span className="logged-in"><button style={{ background: 'none', border: 'none' }} onClick={() => { setShow(true) }}>⚙</button>{readyState === ReadyState.CLOSED ? "Not connected" : `Logged in as ${clientUsername} on ${localStorage.socket} (${localStorage.seed})`}</span>
             <LocationsList webSocket={{ sendMessage, lastMessage }} />
           </Row>
         </Container>

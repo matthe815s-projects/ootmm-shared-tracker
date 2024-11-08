@@ -111,7 +111,7 @@ function LocationsList({ webSocket }) {
         <Col style={{ height: "100%", overflowY: "scroll" }}>
             {<input type="text" className="Search-bar" placeholder="Search" value={search} onChange={(e) => { setSearch(e.target.value) }} />}<br />
 
-            {<select onChange={(e) => setFilter(parseInt(e.target.value))} className="Search-bar">
+            {<select style={{ marginTop: "4px" }} onChange={(e) => setFilter(parseInt(e.target.value))} className="Search-bar">
                 <option value={"0"}>No filter</option>
                 <option value={"1"}>Only show unchecked</option>
             </select>}
