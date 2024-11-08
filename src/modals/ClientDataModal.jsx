@@ -5,15 +5,13 @@ import UsernameContext from "../contexts/UsernameContext";
 function ClientDataModal({ show, setShow }) {
     const [socketUrl, setSocketUrl] = useState(localStorage.socket ?? `ws://${/https?:\/\/([\w\d.\-_!@#$%^&*()]*)?/g.exec(window.location.href)[1]}:8080`)
 
-    function onSetUsername(client) {
+    function onModalSubmit(client) {
         localStorage.username = client.clientUsername
         localStorage.seed = client.seed
+        localStorage.socket = socketUrl
+        localStorage.initialSetup = true
 
-        if (localStorage.socket !== socketUrl) {
-            localStorage.socket = socketUrl
-            window.location.reload()
-        }
-
+        window.location.reload()
         setShow(false)
     }
 
@@ -36,7 +34,7 @@ function ClientDataModal({ show, setShow }) {
                     </Modal.Body>
 
                     <Modal.Footer style={{ backgroundColor: "#1e2124", border: "none", display: "flex" }}>
-                        <Button variant="primary" onClick={() => onSetUsername(client)}>Save Changes</Button>
+                        <Button variant="primary" onClick={() => onModalSubmit(client)}>Save Changes</Button>
                     </Modal.Footer>
                 </Modal.Dialog>
             </div>
