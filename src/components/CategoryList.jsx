@@ -1,8 +1,9 @@
 import LocationCheck from "./LocationCheck"
 
 function LocationsCategorized({ category, search, setCheckState, filter, onClicked, isCollapsed, checkedBoxes }) {
-    const isAvaliableLocation = (location) => (location.name.toLowerCase().includes(search) || location.category.toLowerCase().includes(search))
-    if (category.locations.filter(isAvaliableLocation).length === 0) return <></>
+    const isAvailableLocation = (location) => (location.name.toLowerCase().includes(search) || location.category.toLowerCase().includes(search))
+    const isChecked = (location) => filter === 1 && (checkedBoxes[location.index] && checkedBoxes[location.index].checked)
+    if (category.locations.filter(isChecked).length === category.locations.length || category.locations.filter(isAvailableLocation).length === 0) return <></>
 
     const mapLocationsToNodes = (location, index, array) => {
         const matchesNameOrCategory = (location.name.toLowerCase().includes(search) || location.category.toLowerCase().includes(search))
