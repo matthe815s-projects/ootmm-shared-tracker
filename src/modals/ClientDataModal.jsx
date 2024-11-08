@@ -5,15 +5,13 @@ import UsernameContext from "../contexts/UsernameContext";
 function ClientDataModal({ show, setShow }) {
     const [socketUrl, setSocketUrl] = useState(localStorage.socket ?? `ws://${/https?:\/\/([\w\d.\-_!@#$%^&*()]*)?/g.exec(window.location.href)[1]}:8080`)
 
-    function onSetUsername(client) {
+    function onModalSubmit(client) {
         localStorage.username = client.clientUsername
         localStorage.seed = client.seed
+        localStorage.socket = socketUrl
+        localStorage.initialSetup = true
 
-        if (localStorage.socket !== socketUrl) {
-            localStorage.socket = socketUrl
-            window.location.reload()
-        }
-
+        window.location.reload()
         setShow(false)
     }
 
@@ -27,16 +25,16 @@ function ClientDataModal({ show, setShow }) {
                     </Modal.Header>
 
                     <Modal.Body style={{ backgroundColor: "#36393e", color: "white" }}>
-                        <label className="Modal-label">Set your username</label><br />
-                        {<input className="Search-bar" type="text" value={client.clientUsername} onChange={(e) => {client.setClientUsername(e.target.value)}} />}<br />
-                        <label className="Modal-label">Set the socket URL</label><br />
-                        {<input className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
-                        <label className="Modal-label">Set the seed</label><br />
-                        {<input className="Search-bar" type="text" value={client.seed} onChange={(e) => {client.setSeed(e.target.value)}} />}
+                        <label htmlFor="username"  className="Modal-label">Username</label><br />
+                        {<input id="username" className="Search-bar" type="text" placeholder="Set your display name" value={client.clientUsername} onChange={(e) => {client.setClientUsername(e.target.value)}} />}<br />
+                        <label htmlFor="seed" className="Modal-label">Seed</label><br />
+                        {<input id="seed" className="Search-bar" type="text" placeholder="Set your seed" value={client.seed} onChange={(e) => {client.setSeed(e.target.value)}} />}
+                        <label htmlFor="socket" className="Modal-label">Socket URL</label><br />
+                        {<input id="socket" className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
                     </Modal.Body>
 
                     <Modal.Footer style={{ backgroundColor: "#1e2124", border: "none", display: "flex" }}>
-                        <Button variant="primary" onClick={() => onSetUsername(client)}>Save Changes</Button>
+                        <Button variant="primary" onClick={() => onModalSubmit(client)}>Save Changes</Button>
                     </Modal.Footer>
                 </Modal.Dialog>
             </div>
