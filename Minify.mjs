@@ -1,22 +1,25 @@
 import { readdirSync, readFileSync, writeFileSync, lstatSync } from "node:fs"
 import { minify } from 'minify'
 
-function runMinify(folder) {
+async function runMinify(folder) {
   const buildFiles = readdirSync(folder)
-  buildFiles.forEach(async (file) => {
-    if (lstatSync(`${folder}/${file}`).isDirectory()) return
-    const fileContents = String(readFileSync(`${folder}/${file}`))
-    console.log(`Minimizing ${folder}/${file}`)
 
-    if (file.endsWith(".json")) {
-      const modifiedContents = fileContents.replace(/(\r\n|\n|\r)/gm,"").replaceAll(" ", "")
-      writeFileSync(`${folder}/${file}`, modifiedContents)
-    } else if (file.endsWith("html") || file.endsWith("js") || file.endsWith("css")) {
-      await minify(`${folder}/${file}`)
-    }
-  })
+  for (const file of buildFiles) {
+      if (lstatSync(`${folder}/${file}`).isDirectory()) continue;
+
+      const fileContents = String(readFileSync(`${folder}/${file}`))
+      console.log(`Minimizing ${folder}/${file}`)
+
+      if (file.endsWith(".json")) {
+        const modifiedContents = fileContents.replace(/(\r\n|\n|\r)/gm,"").replaceAll(" ", "")
+        writeFileSync(`${folder}/${file}`, modifiedContents)
+      } else if (file.endsWith("html") || file.endsWith("css")) {
+        await minify(`${folder}/${file}`)
+      }
+  }
 }
 
-runMinify("build")
-runMinify("build/static/js")
-runMinify("build/static/css")
+await runMinify("build")
+await runMinify("build/static/js")
+await runMinify("build/static/css")
+process.exit()
