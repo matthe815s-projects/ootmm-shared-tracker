@@ -12,6 +12,7 @@ function LocationsList({ webSocket }) {
     const [locations, setLocations] = useState([]);
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
+    const [filter, setFilter] = useState(0);
 
     useEffect(() => {
         Promise.all([
@@ -109,7 +110,13 @@ function LocationsList({ webSocket }) {
     return (
         <Col style={{ height: "100%", overflowY: "scroll" }}>
             {<input type="text" className="Search-bar" placeholder="Search" value={search} onChange={(e) => { setSearch(e.target.value) }} />}<br />
-            {categorizeLocations().map((category) => <LocationsCategorized category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)}
+
+            {<select onChange={(e) => setFilter(parseInt(e.target.value))} className="Search-bar">
+                <option value={"0"}>No filter</option>
+                <option value={"1"}>Only show unchecked</option>
+            </select>}
+
+            {categorizeLocations().map((category) => <LocationsCategorized category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)}
         </Col>
     )
 }
