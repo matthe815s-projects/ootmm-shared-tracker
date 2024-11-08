@@ -25,12 +25,12 @@ function ClientDataModal({ show, setShow }) {
                     </Modal.Header>
 
                     <Modal.Body style={{ backgroundColor: "#36393e", color: "white" }}>
-                        <label className="Modal-label">Set your username</label><br />
-                        {<input className="Search-bar" type="text" value={client.clientUsername} onChange={(e) => {client.setClientUsername(e.target.value)}} />}<br />
-                        <label className="Modal-label">Set the socket URL</label><br />
+                        <label className="Modal-label">Username</label><br />
+                        {<input className="Search-bar" type="text" placeholder="Set your display name" value={client.clientUsername} onChange={(e) => {client.setClientUsername(e.target.value)}} />}<br />
+                        <label className="Modal-label">Seed</label><br />
+                        {<input className="Search-bar" type="text" placeholder="Set your seed" value={client.seed} onChange={(e) => {client.setSeed(e.target.value)}} />}
+                        <label className="Modal-label">Socket URL</label><br />
                         {<input className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
-                        <label className="Modal-label">Set the seed</label><br />
-                        {<input className="Search-bar" type="text" value={client.seed} onChange={(e) => {client.setSeed(e.target.value)}} />}
                     </Modal.Body>
 
                     <Modal.Footer style={{ backgroundColor: "#1e2124", border: "none", display: "flex" }}>

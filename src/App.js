@@ -8,9 +8,9 @@ import WebsocketContext from "./contexts/WebsocketContext";
 import useWebSocket, {ReadyState} from "react-use-websocket";
 
 function App() {
-  const [show, setShow] = useState(!localStorage.initialSetup || false);
-  const [clientUsername, setClientUsername] = useState(localStorage.username || "Set a username here");
-  const [seed, setSeed] = useState(localStorage.seed || 'Set a seed')
+  const [show, setShow] = useState(localStorage.initialSetup === undefined || false);
+  const [clientUsername, setClientUsername] = useState(localStorage.username || "");
+  const [seed, setSeed] = useState(localStorage.seed || "")
 
   let { sendMessage, lastMessage, readyState } = useWebSocket(localStorage.socket || 'ws://localhost:8080', {
     onOpen: () => sendMessage(JSON.stringify({ op: 0, seed }))
