@@ -11,7 +11,7 @@ async function runMinify(folder) {
       console.log(`Minimizing ${folder}/${file}`)
 
       if (file.endsWith(".json")) {
-        const modifiedContents = fileContents.replace(/(\r\n|\n|\r)/gm,"").replaceAll(" ", "")
+        const modifiedContents = fileContents.replace(/(\r\n|\n|\r)/gm,"")
         writeFileSync(`${folder}/${file}`, modifiedContents)
       } else if (file.endsWith("html") || file.endsWith("css")) {
         await minify(`${folder}/${file}`)
