@@ -1,4 +1,4 @@
-import {lazy, useEffect, useState} from "react";
+import React, {lazy, useCallback, useEffect, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
 
@@ -65,41 +65,41 @@ function Locations({ isLoaded, locations, webSocket }) {
         // eslint-disable-next-line
     }, [webSocket.lastMessage])
 
-    const setCheckState = (client, index, checked) => {
+    const setCheckState = useCallback((client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
         newCheckedBoxes[index] = { client, checked };
 
         setCheckedBoxes(newCheckedBoxes);
         webSocket.sendMessage(JSON.stringify({ op: 1, client, index, checked }));
-    }
+    }, [checkedBoxes, webSocket])
 
-    const categorizeLocations = () => {
-        const categories = []
-        const each = (location, index) => {
-            const category = categories.find((category) => category.name === location.area)
-            location.index = index
-            if (!category) {
-                categories.push({ name: location.area, color: location.color, locations: [location] })
-                return
-            }
-
-            category.locations.push(location)
+    const categorizedLocations = React.useMemo(() => {
+      const categories = []
+      const each = (location, index) => {
+        const category = categories.find((category) => category.name === location.area)
+        location.index = index
+        if (!category) {
+          categories.push({ name: location.area, color: location.color, locations: [location] })
+          return
         }
 
-        locations.forEach(each)
-        return categories
-    }
+        category.locations.push(location)
+      }
 
-    const collapseCategory = (category) => {
+      locations.forEach(each)
+      return categories
+    }, [locations]);
+
+    const collapseCategory = React.useCallback((category) => {
         const newCollapsed = [...collapsed]
         if (newCollapsed.includes(category)) newCollapsed.splice(collapsed.indexOf(category), 1)
         else newCollapsed.push(category)
         setCollapsed(newCollapsed)
-    }
+    }, [collapsed])
+
+    const mapToCategory = React.useCallback((category) => <Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />, [search, collapsed, filter, checkedBoxes, setCheckState, collapseCategory])
 
     if (!isLoaded) return <Locations.Lazy />
-
-    const mapToCategory = (category) => <Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />
     return (
       <Col style={{ height: "100%", width: "66%", overflowY: "scroll" }}>
           <Locations.Search search={{ query: search, setSearch }} /><br />
@@ -109,7 +109,7 @@ function Locations({ isLoaded, locations, webSocket }) {
               <option value={"1"}>Only show unchecked</option>
           </select>}
 
-          {categorizeLocations().map(mapToCategory)}
+          {categorizedLocations.map(mapToCategory)}
       </Col>
     )
 }
