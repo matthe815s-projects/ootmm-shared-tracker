@@ -1,7 +1,7 @@
 import LocationCheck from "./LocationCheck"
 import React, {useCallback, useMemo} from "react";
 
-function LocationsCategorized({ category, search, setCheckState, filter, onClicked, isCollapsed, checkedBoxes }) {
+const LocationsCategorized = React.memo(({ category, search, setCheckState, filter, onClicked, isCollapsed, checkedBoxes }) => {
     const searchFoundLocation = useMemo(() => category.locations.some((location) => (location.name.toLowerCase().includes(search) || location.category.toLowerCase().includes(search))), [category.locations, search])
     const isCompletelyCleared = useMemo(() => category.locations.every((location) => filter === 1 && (checkedBoxes[location.index] && checkedBoxes[location.index].checked)), [category.locations, filter, checkedBoxes])
 
@@ -23,8 +23,7 @@ function LocationsCategorized({ category, search, setCheckState, filter, onClick
         )
     }, [search, filter, checkedBoxes, isCollapsed, category, setCheckState])
 
-    const isCompleted = (location) => checkedBoxes[location.index]?.checked
-    const totalCompleted = useMemo(() => category.locations.filter(isCompleted).length, [category.locations, checkedBoxes])
+    const totalCompleted = useMemo(() => category.locations.filter((location) => checkedBoxes[location.index]?.checked).length, [category.locations, checkedBoxes])
     const numberCleared = totalCompleted === category.locations.length ? <span>Fully Cleared</span> : <span>{totalCompleted} / {category.locations.length} complete</span>
 
     if (isCompletelyCleared || !searchFoundLocation) return
@@ -35,6 +34,6 @@ function LocationsCategorized({ category, search, setCheckState, filter, onClick
             {category.locations.map(mapLocationsToNodes)}
         </div>
     )
-}
+})
 
 export default LocationsCategorized

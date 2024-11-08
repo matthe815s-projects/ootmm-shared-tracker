@@ -81,6 +81,8 @@
   background-color: #36393e;
   color: white;
   border-bottom: solid 1px #4d4f57;
+  display: flex;
+  justify-content: space-between
 }
 
 .Location input:hover {
