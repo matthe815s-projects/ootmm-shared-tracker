@@ -93,7 +93,7 @@ function Locations({ isLoaded, locations, webSocket }) {
 
     if (!isLoaded) return <p>Loading</p>
 
-    const mapToCategory = (category) => (<Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />)
+    const mapToCategory = (category) => <Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />
     return (
       <Col style={{ height: "100%", width: "66%", overflowY: "scroll" }}>
           <Locations.Search search={{ query: search, setSearch }} /><br />

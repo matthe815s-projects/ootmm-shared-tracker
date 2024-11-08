@@ -1,5 +1,5 @@
 import { Container, Row } from 'react-bootstrap';
-import {useEffect, useState} from 'react';
+import {memo, useEffect, useState} from 'react';
 import Locations from './components/Locations';
 import UsernameContext from './contexts/UsernameContext';
 import ClientDataModal from './modals/ClientDataModal';
@@ -32,6 +32,15 @@ function App() {
       })
   }, [])
 
+  const LoggedInMemo = memo(function loggedIn({ username, seed, socket }) {
+    return (
+      <span className="logged-in">
+        <button style={{ background: 'none', border: 'none' }} onClick={() => { setShow(true) }}>⚙</button>
+        {readyState === ReadyState.CLOSED ? "Not connected" : `Logged in as ${username} on ${socket} (${seed})`}
+      </span>
+    )
+  })
+
   return (
     <UsernameContext.Provider value={{ clientUsername, setClientUsername, seed, setSeed }}>
       <WebsocketContext.Provider value={{ sendMessage }}>
@@ -39,7 +48,7 @@ function App() {
         <Container fluid={true} style={{ height: "100vh" }}>
           <Row style={{ height: "100%", display: "flex", alignItems: "center", flexDirection: "column" }}>
             <h1 className="site-header" style={{ textAlign: "center" }}>OoTMM Shared Tracker</h1>
-            <span className="logged-in"><button style={{ background: 'none', border: 'none' }} onClick={() => { setShow(true) }}>⚙</button>{readyState === ReadyState.CLOSED ? "Not connected" : `Logged in as ${clientUsername} on ${localStorage.socket} (${localStorage.seed})`}</span>
+            <LoggedInMemo username={localStorage.username} socket={localStorage.socket} seed={localStorage.seed} />
             <Locations locations={locations} isLoaded={locationsLoaded} webSocket={{ sendMessage, lastMessage }} />
           </Row>
         </Container>
