@@ -1,8 +1,15 @@
 import {lazy, useEffect, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
+import LocationCheck from "./LocationCheck";
 
 Locations.Category = lazy(() => import('./CategoryList.jsx'));
+Locations.Lazy = function lazyLocations() { return <div className="lazy-locations" /> }
+Locations.Search = function searchField({ search }) {
+  return (
+    <input type="text" className="Search-bar" placeholder="Search" value={search.query} onChange={(e) => { search.setSearch(e.target.value) }} />
+  )
+}
 
 let queue = []
 let queueAwait = false
@@ -91,7 +98,7 @@ function Locations({ isLoaded, locations, webSocket }) {
         setCollapsed(newCollapsed)
     }
 
-    if (!isLoaded) return <p>Loading</p>
+    if (!isLoaded) return <Locations.Lazy />
 
     const mapToCategory = (category) => <Locations.Category category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />
     return (
@@ -105,12 +112,6 @@ function Locations({ isLoaded, locations, webSocket }) {
 
           {categorizeLocations().map(mapToCategory)}
       </Col>
-    )
-}
-
-Locations.Search = function searchField({ search }) {
-    return (
-      <input type="text" className="Search-bar" placeholder="Search" value={search.query} onChange={(e) => { search.setSearch(e.target.value) }} />
     )
 }
 

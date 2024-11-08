@@ -41,6 +41,8 @@ function App() {
     )
   })
 
+  const LazyLocations = () => { return <div className="lazy-locations" /> }
+
   return (
     <UsernameContext.Provider value={{ clientUsername, setClientUsername, seed, setSeed }}>
       <WebsocketContext.Provider value={{ sendMessage }}>
@@ -49,7 +51,7 @@ function App() {
           <Row style={{ height: "100%", display: "flex", alignItems: "center", flexDirection: "column" }}>
             <h1 className="site-header" style={{ textAlign: "center" }}>OoTMM Shared Tracker</h1>
             <LoggedInMemo username={localStorage.username} socket={localStorage.socket} seed={localStorage.seed} />
-            <Suspense fallback={<p>Loading</p>}>
+            <Suspense fallback={<LazyLocations />}>
               <Locations locations={locations} isLoaded={locationsLoaded} webSocket={{ sendMessage, lastMessage }} />
             </Suspense>
           </Row>
