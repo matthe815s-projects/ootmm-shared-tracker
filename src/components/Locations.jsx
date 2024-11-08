@@ -24,7 +24,6 @@ function Locations({ isLoaded, locations, webSocket }) {
 
         const parseData = (data) => {
           const message = JSON.parse(data);
-          console.log(message)
 
           let newCheckedBoxes
           switch (message.op) {
@@ -41,7 +40,6 @@ function Locations({ isLoaded, locations, webSocket }) {
                 newCheckedBoxes = []
                 while (queue.length > 0) {
                     let message = queue[0]
-                    console.log(message)
                     newCheckedBoxes[message.index] = { client: message.client, checked: message.checked };
                     queue.splice(0, 1)
                 }
