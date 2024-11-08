@@ -14,7 +14,7 @@ const LocationsCategorized = React.memo(({ category, search, setCheckState, filt
         const notSearchOrMatchesSearch = !isSearching || matchesNameOrCategory
         if (!notSearchOrMatchesSearch) return null;
 
-        const showCategoryLabel = !isCollapsed && (index === 0 || category !== array[index - 1].category);
+        const showCategoryLabel = !isCollapsed && (index === 0 || location.category !== array[index - 1].category);
         return (
             <React.Fragment key={index}>
                   {showCategoryLabel && <label className="NodeName"><b>{location.category}</b></label>}
