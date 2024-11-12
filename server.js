@@ -23,7 +23,7 @@ function getSaveFormat(save) {
 function convertSaveFormat(save) {
     switch (getSaveFormat(save)) {
         case SAVE_FORMAT.V1:
-            return { version: SAVE_FORMAT.KOKIRI, players: [], save }
+            return { version: SAVE_FORMAT.KOKIRI, players: [], saves: save }
         default:
             return save
     }
