@@ -8,19 +8,39 @@ const wss = new WebSocketServer({ port });
 const clients = [];
 const messageHistory = {};
 
+const SAVE_FORMAT = {
+    V1: 1,
+    KOKIRI: 2
+}
+
+const SERVER_VERSION = SAVE_FORMAT.KOKIRI
+
+function getSaveFormat(save) {
+    if (Array.isArray(save)) return SAVE_FORMAT.V1;
+    return save.version
+}
+
+function convertSaveFormat(save) {
+    switch (getSaveFormat(save)) {
+        case SAVE_FORMAT.V1:
+            return { version: SAVE_FORMAT.KOKIRI, players: [], saves: save }
+        default:
+            return save
+    }
+}
+
 function broadcast(seed, data) {
-    if (!messageHistory[seed]) messageHistory[seed] = []
-    messageHistory[seed].push(JSON.parse(String(data)))
+    if (!messageHistory[seed]) messageHistory[seed] = { version: SAVE_FORMAT.KOKIRI, players: [], saves: [] }
+    messageHistory[seed].saves.push(JSON.parse(String(data)))
     clients.forEach(client => {
-        if (client.username == JSON.parse(data).client) return
-        if (client.seed != seed) return
+        if (client.username === JSON.parse(data).client) return
+        if (client.seed !== seed) return
         if (client.readyState !== WebSocket.OPEN) return
         client.send(data);
     });
 }
 
 function saveGame(seed) {
-    console.log(messageHistory[seed])
     writeFileSync(`${seed}.sav`, JSON.stringify(messageHistory[seed]))
     console.log("Game progress saved...")
 }
@@ -28,17 +48,16 @@ function saveGame(seed) {
 function loadGame(seed) {
     console.log(`Loading game progress for ${seed}...`)
     if (!existsSync(`${seed}.sav`)) return
-    console.log( messageHistory[seed] )
-    messageHistory[seed] = JSON.parse(String(readFileSync(`${seed}.sav`)))
-    console.log( messageHistory[seed] )
+    messageHistory[seed] = convertSaveFormat(JSON.parse(String(readFileSync(`${seed}.sav`))))
     console.log("Game progress loaded...")
 }
 
 function sendData(ws) {
     let history = messageHistory[ws.seed] ?? []
-    console.log(history)
-    ws.send(JSON.stringify({ op: 0, size: history.length }))
-    history.forEach((data) => {
+    ws.send(JSON.stringify({ op: 0, size: history.length }));
+
+    const save = history.saves
+    save.forEach((data) => {
         console.log(data)
         ws.send(JSON.stringify(data))
     })
@@ -48,15 +67,22 @@ function sendData(ws) {
 wss.on("connection", (ws) => {
     console.log("Client connected");
     clients.push(ws);
-    
+
     ws.on('message', (message) => {
         const parsed = JSON.parse(message)
         console.log(parsed)
 
         switch (parsed.op) {
             case 0:
+                if (parsed.version !== SERVER_VERSION) {
+                    console.log("Received connection from incompatible client.")
+                    ws.send(JSON.stringify({}))
+                    ws.close()
+                    return
+                }
+
                 ws.seed = parsed.seed
-                if (messageHistory[ws.seed] == undefined) loadGame(ws.seed)
+                if (messageHistory[ws.seed] === undefined) loadGame(ws.seed)
                 console.log(`Received client seed`)
                 console.log("Synchronizing Client...");
                 sendData(ws)

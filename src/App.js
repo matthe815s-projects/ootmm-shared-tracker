@@ -16,7 +16,7 @@ function App() {
   const [locations, setLocations] = useState([]);
 
   let { sendMessage, lastMessage, readyState } = useWebSocket(localStorage.socket || 'ws://localhost:8080', {
-    onOpen: () => sendMessage(JSON.stringify({ op: 0, seed }))
+    onOpen: () => sendMessage(JSON.stringify({ op: 0, version: 2, seed }))
   });
 
   useEffect(() => {
