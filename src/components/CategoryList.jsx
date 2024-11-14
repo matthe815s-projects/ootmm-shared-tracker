@@ -1,7 +1,7 @@
 import LocationCheck from "./LocationCheck"
 import React, {useCallback, useMemo} from "react";
 
-const LocationsCategorized = React.memo(({ category, search, setCheckState, filter, onClicked, isCollapsed, checkedBoxes }) => {
+const LocationsCategorized = React.memo(({ category, search, setCheckState, filter, onClicked, isCollapsed, players, checkedBoxes }) => {
     const searchFoundLocation = useMemo(() => category.locations.some((location) => (location.name.toLowerCase().includes(search) || location.category.toLowerCase().includes(search))), [category.locations, search])
     const isCompletelyCleared = useMemo(() => category.locations.every((location) => filter === 1 && (checkedBoxes[location.index] && checkedBoxes[location.index].checked)), [category.locations, filter, checkedBoxes])
 
@@ -18,10 +18,10 @@ const LocationsCategorized = React.memo(({ category, search, setCheckState, filt
         return (
             <React.Fragment key={index}>
                   {showCategoryLabel && <label className="NodeName"><b>{location.category}</b></label>}
-                  {!isCollapsed && <LocationCheck key={index} index={location.index} locationName={location} checkData={checkedBoxes[location.index]} setCheckState={setCheckState} />}
+                  {!isCollapsed && <LocationCheck key={index} index={location.index} locationName={location} players={players} checkData={checkedBoxes[location.index]} setCheckState={setCheckState} />}
             </React.Fragment>
         )
-    }, [search, filter, checkedBoxes, isCollapsed, setCheckState])
+    }, [search, filter, checkedBoxes, isCollapsed, players, setCheckState])
 
     const totalCompleted = useMemo(() => category.locations.filter((location) => checkedBoxes[location.index]?.checked).length, [category.locations, checkedBoxes])
     const numberCleared = totalCompleted === category.locations.length ? <span>Fully Cleared</span> : <span>{totalCompleted} / {category.locations.length} complete</span>

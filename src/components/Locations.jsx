@@ -13,11 +13,15 @@ Locations.Search = function searchField({ search }) {
 let queue = []
 let queueAwait = false
 
+let queuePlayers = []
+let queueAwaitPlayers = false
+
 function Locations({ isLoaded, locations, webSocket }) {
     const [checkedBoxes, setCheckedBoxes] = useState([{}]);
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
     const [filter, setFilter] = useState(0);
+    const [players, setPlayers] = useState([])
 
     useEffect(() => {
         if (webSocket.lastMessage === null) return
@@ -26,12 +30,13 @@ function Locations({ isLoaded, locations, webSocket }) {
           const message = JSON.parse(data);
 
           let newCheckedBoxes
+          let newPlayers
           switch (message.op) {
             case 0:
                 queueAwait = true
                 break
             case 1:
-                if (queueAwait) break;
+                if (queueAwait) { queue.push(message); break; }
                 newCheckedBoxes = [...checkedBoxes]
                 newCheckedBoxes[message.index] = { client: message.client, checked: message.checked };
                 setCheckedBoxes(newCheckedBoxes)
@@ -46,11 +51,29 @@ function Locations({ isLoaded, locations, webSocket }) {
                 setCheckedBoxes(newCheckedBoxes);
                 queueAwait = false
                 return
+            case 3:
+                queueAwaitPlayers = true
+                break;
+            case 4:
+                if (queueAwaitPlayers) { queuePlayers.push(message); break; }
+                newPlayers = [...players]
+                newPlayers.push(message.name)
+                setPlayers(newPlayers)
+                break;
+            case 5:
+                newPlayers = []
+                while (queuePlayers.length > 0) {
+                  let message = queuePlayers[0]
+                  newPlayers.push(message.name)
+                  queuePlayers.splice(0, 1)
+                }
+                setPlayers([...newPlayers]);
+                queueAwaitPlayers = false
+                break;
             default:
                 console.log("Invalid packet received.")
                 break;
           }
-          if (queueAwait) queue.push(message)
         }
 
         if (webSocket.lastMessage.data instanceof Blob) {
@@ -65,11 +88,14 @@ function Locations({ isLoaded, locations, webSocket }) {
 
     const setCheckState = useCallback((client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
-        newCheckedBoxes[index] = { client, checked };
+        newCheckedBoxes[index] = Object.assign({ client: [], checked }, checkedBoxes[index])
+
+        if (checked) newCheckedBoxes[index].client.push(players.indexOf(client))
+        else newCheckedBoxes[index].client.splice(newCheckedBoxes[index].client.indexOf(players.indexOf(client)), 1)
 
         setCheckedBoxes(newCheckedBoxes);
-        webSocket.sendMessage(JSON.stringify({ op: 1, client, index, checked }));
-    }, [checkedBoxes, webSocket])
+        webSocket.sendMessage(JSON.stringify({ op: 1, client: newCheckedBoxes[index].client, index, checked }));
+    }, [checkedBoxes, players, webSocket])
 
     const categorizedLocations = React.useMemo(() => {
       const categories = []
@@ -95,7 +121,7 @@ function Locations({ isLoaded, locations, webSocket }) {
         setCollapsed(newCollapsed)
     }, [collapsed])
 
-    const mapToCategory = React.useCallback((category, index) => <Locations.Category key={index} category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />, [search, collapsed, filter, checkedBoxes, setCheckState, collapseCategory])
+    const mapToCategory = React.useCallback((category, index) => <Locations.Category key={index} category={category} search={search.toLowerCase()} onClicked={() => collapseCategory(category.name)} isCollapsed={!collapsed.includes(category.name) && search === ""} filter={filter} players={players} checkedBoxes={checkedBoxes} setCheckState={setCheckState} />, [search, collapsed, filter, players, checkedBoxes, setCheckState, collapseCategory])
 
     if (!isLoaded) return <Locations.Lazy />
     return (
