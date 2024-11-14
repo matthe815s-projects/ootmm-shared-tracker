@@ -28,7 +28,7 @@ function Locations({ isLoaded, locations, webSocket }) {
 
         const parseData = (data) => {
           const message = JSON.parse(data);
-          console.log(data)
+          
           let newCheckedBoxes
           let newPlayers
           switch (message.op) {
