@@ -92,7 +92,7 @@ function Locations({ isLoaded, locations, webSocket }) {
 
         if (checked) newCheckedBoxes[index].client.push(players.indexOf(client))
         else {
-          if (typeof (newCheckedBoxes[index].client) === "string") newCheckedBoxes[index].client = [] // legacy fix
+          if (!Array.isArray(newCheckedBoxes[index].client)) newCheckedBoxes[index].client = [] // legacy fix
           newCheckedBoxes[index].client.splice(newCheckedBoxes[index].client.indexOf(players.indexOf(client)), 1)
         }
 
