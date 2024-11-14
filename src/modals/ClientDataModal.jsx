@@ -1,16 +1,24 @@
 import { Modal, Button } from "react-bootstrap";
 import {useContext, useState} from "react";
 import UsernameContext from "../contexts/UsernameContext";
+import WebsocketContext from "../contexts/WebsocketContext";
 
 function ClientDataModal({ show, setShow }) {
     const { clientUsername, seed, setSeed, setClientUsername } = useContext(UsernameContext)
+    const { sendMessage } = useContext(WebsocketContext)
     const [socketUrl, setSocketUrl] = useState(localStorage.socket ?? `ws://${/https?:\/\/([\w\d.\-_!@#$%^&*()]*)?/g.exec(window.location.href)[1]}:8080`)
 
     function onModalSubmit() {
-        localStorage.username = clientUsername
         localStorage.seed = seed
         localStorage.socket = socketUrl
         localStorage.initialSetup = true
+
+        if (clientUsername !== localStorage.username) {
+            localStorage.username = clientUsername
+            sendMessage(JSON.stringify({ op: 6, client: clientUsername }))
+            setShow(false)
+            return
+        }
 
         window.location.reload()
         setShow(false)
