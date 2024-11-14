@@ -1,8 +1,6 @@
-import React, {lazy, useCallback, useContext, useEffect, useState} from "react";
+import React, {lazy, useCallback, useEffect, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
-import {useCol} from "react-bootstrap/Col";
-import UsernameContext from "../contexts/UsernameContext";
 
 Locations.Category = lazy(() => import('./CategoryList.jsx'));
 Locations.Lazy = function lazyLocations() { return <div className="lazy-locations" /> }
@@ -19,7 +17,6 @@ let queuePlayers = []
 let queueAwaitPlayers = false
 
 function Locations({ isLoaded, locations, webSocket }) {
-    const { clientUsername, isMultiworld } = useContext(UsernameContext)
     const [checkedBoxes, setCheckedBoxes] = useState([{}]);
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
@@ -98,7 +95,7 @@ function Locations({ isLoaded, locations, webSocket }) {
 
         setCheckedBoxes(newCheckedBoxes);
         webSocket.sendMessage(JSON.stringify({ op: 1, client: newCheckedBoxes[index].client, index, checked }));
-    }, [checkedBoxes, isMultiworld, players, webSocket])
+    }, [checkedBoxes, players, webSocket])
 
     const categorizedLocations = React.useMemo(() => {
       const categories = []

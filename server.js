@@ -24,8 +24,6 @@ const SAVE_FORMATTER_STEPS = {
 }
 
 function ArrayToJSONTransformer(save) {
-    console.log("Convert array")
-    console.log(save)
     return { saves: save }
 }
 
@@ -74,7 +72,10 @@ class SaveManager {
     }
 
     load (seed) {
-        if (!existsSync(`${seed}.sav`)) return this.convert([])
+        if (!existsSync(`${seed}.sav`)) {
+            this.messageHistory[seed] = this.convert([])
+            return
+        }
 
         console.log(`Loading game progress for ${seed}...`)
         const save = JSON.parse(String(readFileSync(`${seed}.sav`)))
@@ -145,6 +146,7 @@ wss.on("connection", (ws) => {
                 console.log(`Received client seed`)
                 if (!saveManager.has(ws.seed)) saveManager.load(ws.seed)
                 if (!saveManager.get(ws.seed).players.includes(ws.username)) saveManager.get(ws.seed).players.push(ws.username)
+                console.log(saveManager.messageHistory[ws.seed])
                 console.log("Synchronizing Client...");
                 sendData(ws)
                 break;

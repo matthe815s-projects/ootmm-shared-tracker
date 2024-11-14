@@ -7,7 +7,6 @@
     <list default="true" id="7e818567-1818-40f5-8afc-77a24745f222" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/LocationCheck.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LocationCheck.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Locations.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Locations.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/modals/ClientDataModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/modals/ClientDataModal.jsx" afterDir="false" />
@@ -70,7 +69,7 @@
       <workItem from="1731082030105" duration="12783000" />
       <workItem from="1731279569498" duration="1954000" />
       <workItem from="1731429540716" duration="6501000" />
-      <workItem from="1731544184114" duration="11787000" />
+      <workItem from="1731544184114" duration="12798000" />
     </task>
     <servers />
   </component>

@@ -43,7 +43,7 @@ function ClientDataModal({ show, setShow }) {
                   <label htmlFor="socket" className="Modal-label">Socket URL</label><br />
                   {<input id="socket" className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
                   <label htmlFor="multiworld">Is Multiworld?</label><br />
-                  {<input checked={isMultiworld} onChange={(e) => setMultiworld(e.target.value === "on")} id="multiworld" type="checkbox" />}
+                  {<input checked={isMultiworld} onChange={(e) => setMultiworld(e.target.checked)} id="multiworld" type="checkbox" />}
               </Modal.Body>
 
               <Modal.Footer style={{ backgroundColor: "#1e2124", border: "none", display: "flex" }}>
