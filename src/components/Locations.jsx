@@ -1,6 +1,8 @@
-import React, {lazy, useCallback, useEffect, useState} from "react";
+import React, {lazy, useCallback, useContext, useEffect, useState} from "react";
 import { Col } from "react-bootstrap";
 import { stringifyBlob } from "../utils/BlobUtils";
+import {useCol} from "react-bootstrap/Col";
+import UsernameContext from "../contexts/UsernameContext";
 
 Locations.Category = lazy(() => import('./CategoryList.jsx'));
 Locations.Lazy = function lazyLocations() { return <div className="lazy-locations" /> }
@@ -17,6 +19,7 @@ let queuePlayers = []
 let queueAwaitPlayers = false
 
 function Locations({ isLoaded, locations, webSocket }) {
+    const { clientUsername, isMultiworld } = useContext(UsernameContext)
     const [checkedBoxes, setCheckedBoxes] = useState([{}]);
     const [search, setSearch] = useState("");
     const [collapsed, setCollapsed] = useState([]);
@@ -28,7 +31,7 @@ function Locations({ isLoaded, locations, webSocket }) {
 
         const parseData = (data) => {
           const message = JSON.parse(data);
-          
+
           let newCheckedBoxes
           let newPlayers
           switch (message.op) {
@@ -88,11 +91,14 @@ function Locations({ isLoaded, locations, webSocket }) {
 
     const setCheckState = useCallback((client, index, checked) => {
         const newCheckedBoxes = [...checkedBoxes];
-        newCheckedBoxes[index] = { client: players.indexOf(client), checked };
+        newCheckedBoxes[index] = Object.assign({ client: [], checked }, checkedBoxes[index])
+
+        if (checked) newCheckedBoxes[index].client.push(players.indexOf(client))
+        else newCheckedBoxes[index].client.splice(newCheckedBoxes[index].client.indexOf(players.indexOf(client)), 1)
 
         setCheckedBoxes(newCheckedBoxes);
-        webSocket.sendMessage(JSON.stringify({ op: 1, client: players.indexOf(client), index, checked }));
-    }, [checkedBoxes, players, webSocket])
+        webSocket.sendMessage(JSON.stringify({ op: 1, client: newCheckedBoxes[index].client, index, checked }));
+    }, [checkedBoxes, isMultiworld, players, webSocket])
 
     const categorizedLocations = React.useMemo(() => {
       const categories = []

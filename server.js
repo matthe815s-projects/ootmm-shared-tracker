@@ -74,7 +74,7 @@ class SaveManager {
     }
 
     load (seed) {
-        if (!existsSync(`${seed}.sav`)) return
+        if (!existsSync(`${seed}.sav`)) return this.convert([])
 
         console.log(`Loading game progress for ${seed}...`)
         const save = JSON.parse(String(readFileSync(`${seed}.sav`)))
@@ -144,6 +144,7 @@ wss.on("connection", (ws) => {
                 ws.username = parsed.client
                 console.log(`Received client seed`)
                 if (!saveManager.has(ws.seed)) saveManager.load(ws.seed)
+                if (!saveManager.get(ws.seed).players.includes(ws.username)) saveManager.get(ws.seed).players.push(ws.username)
                 console.log("Synchronizing Client...");
                 sendData(ws)
                 break;

@@ -4,23 +4,27 @@ import UsernameContext from "../contexts/UsernameContext";
 import WebsocketContext from "../contexts/WebsocketContext";
 
 function ClientDataModal({ show, setShow }) {
-    const { clientUsername, seed, setSeed, setClientUsername } = useContext(UsernameContext)
+    const { clientUsername, seed, setSeed, setClientUsername, isMultiworld, setMultiworld } = useContext(UsernameContext)
     const { sendMessage } = useContext(WebsocketContext)
     const [socketUrl, setSocketUrl] = useState(localStorage.socket ?? `ws://${/https?:\/\/([\w\d.\-_!@#$%^&*()]*)?/g.exec(window.location.href)[1]}:8080`)
 
     function onModalSubmit() {
         localStorage.seed = seed
         localStorage.socket = socketUrl
+        localStorage.isMultiworld = isMultiworld
         localStorage.initialSetup = true
 
-        if (clientUsername !== localStorage.username) {
-            localStorage.username = clientUsername
-            sendMessage(JSON.stringify({ op: 6, client: clientUsername }))
+        if (localStorage.socket !== socketUrl || localStorage.seed !== seed) {
+            window.location.reload()
             setShow(false)
             return
         }
 
-        window.location.reload()
+        if (clientUsername !== localStorage.username) {
+            localStorage.username = clientUsername
+            sendMessage(JSON.stringify({ op: 6, client: clientUsername }))
+        }
+
         setShow(false)
     }
 
@@ -38,6 +42,8 @@ function ClientDataModal({ show, setShow }) {
                   {<input id="seed" className="Search-bar" type="text" placeholder="Set your seed" value={seed} onChange={(e) => {setSeed(e.target.value)}} />}
                   <label htmlFor="socket" className="Modal-label">Socket URL</label><br />
                   {<input id="socket" className="Search-bar" type="text" value={socketUrl} onChange={(e) => {setSocketUrl(e.target.value)}} />}<br />
+                  <label htmlFor="multiworld">Is Multiworld?</label><br />
+                  {<input checked={isMultiworld} onChange={(e) => setMultiworld(e.target.value === "on")} id="multiworld" type="checkbox" />}
               </Modal.Body>
 
               <Modal.Footer style={{ backgroundColor: "#1e2124", border: "none", display: "flex" }}>

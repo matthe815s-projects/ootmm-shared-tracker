@@ -12,6 +12,7 @@ function App() {
   const [show, setShow] = useState(localStorage.initialSetup === undefined || false);
   const [clientUsername, setClientUsername] = useState(localStorage.username || "");
   const [seed, setSeed] = useState(localStorage.seed || "")
+  const [isMultiworld, setMultiworld] = useState(Boolean(localStorage.isMultiworld) || false)
   const [locationsLoaded, setLocationsLoaded] = useState(false);
   const [locations, setLocations] = useState([]);
 
@@ -44,7 +45,7 @@ function App() {
   const LazyLocations = () => { return <div className="lazy-locations" /> }
 
   return (
-    <UsernameContext.Provider value={{ clientUsername, setClientUsername, seed, setSeed }}>
+    <UsernameContext.Provider value={{ clientUsername, setClientUsername, seed, setSeed, isMultiworld, setMultiworld }}>
       <WebsocketContext.Provider value={{ sendMessage }}>
         <ClientDataModal show={show} setShow={setShow} />
         <Container fluid={true} style={{ height: "100vh" }}>
