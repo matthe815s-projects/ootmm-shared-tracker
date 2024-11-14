@@ -1,4 +1,3 @@
-// import WebSocket, {WebSocketServer} from "ws";
 const { WebSocketServer, WebSocket } = require("ws");
 const { writeFileSync, existsSync, readFileSync } = require("node:fs")
 
@@ -83,6 +82,10 @@ class SaveManager {
         console.log("Game progress loaded...")
     }
 
+    create () {
+
+    }
+
     has (seed) {
         return this.messageHistory[seed] !== undefined
     }
@@ -130,10 +133,9 @@ wss.on("connection", (ws) => {
 
     ws.on('message', (message) => {
         const parsed = JSON.parse(message)
-        console.log(parsed)
 
         switch (parsed.op) {
-            case 0:
+            case 0: // join room
                 if (parsed.version !== saveManager.serverVersion) {
                     console.log("Received connection from incompatible client.")
                     ws.send(JSON.stringify({}))
@@ -146,17 +148,16 @@ wss.on("connection", (ws) => {
                 console.log(`Received client seed`)
                 if (!saveManager.has(ws.seed)) saveManager.load(ws.seed)
                 if (!saveManager.get(ws.seed).players.includes(ws.username)) saveManager.get(ws.seed).players.push(ws.username)
-                console.log(saveManager.messageHistory[ws.seed])
                 console.log("Synchronizing Client...");
                 sendData(ws)
                 break;
-            case 1:
+            case 1: // send check
                 if (!ws.seed) return console.log("Got message but no seed")
                 console.log(`Received message => ${message}`);
                 broadcast(ws.seed, message);
                 saveManager.save(ws.seed)
                 break;
-            case 6:
+            case 6: // send username change
                 const oldUsername = ws.username
                 ws.username = parsed.client
                 saveManager.get(ws.seed).players[saveManager.get(ws.seed).players.indexOf(oldUsername)] = parsed.client
@@ -165,6 +166,9 @@ wss.on("connection", (ws) => {
                     broadcast(ws.seed, JSON.stringify({ op: 4, name: data }), false)
                 })
                 broadcast(ws.seed, JSON.stringify({ op: 5 }), false)
+                break;
+            case 7:
+                // Create room
                 break;
             default:
                 break;
