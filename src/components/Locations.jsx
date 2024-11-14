@@ -91,7 +91,10 @@ function Locations({ isLoaded, locations, webSocket }) {
         newCheckedBoxes[index] = Object.assign({ client: [], checked }, checkedBoxes[index])
 
         if (checked) newCheckedBoxes[index].client.push(players.indexOf(client))
-        else newCheckedBoxes[index].client.splice(newCheckedBoxes[index].client.indexOf(players.indexOf(client)), 1)
+        else {
+          if (!Array.isArray(newCheckedBoxes[index].client)) newCheckedBoxes[index].client = [] // legacy fix
+          newCheckedBoxes[index].client.splice(newCheckedBoxes[index].client.indexOf(players.indexOf(client)), 1)
+        }
 
         setCheckedBoxes(newCheckedBoxes);
         webSocket.sendMessage(JSON.stringify({ op: 1, client: newCheckedBoxes[index].client, index, checked }));

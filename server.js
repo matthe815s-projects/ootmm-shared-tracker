@@ -33,7 +33,7 @@ function MapUsernamesToArray(save) {
 }
 
 function ReMapUsernames(save) {
-    save.saves = save.saves.map((history) => Object.assign(history, { client: save.players.indexOf(history.client) }))
+    save.saves = save.saves.map((history) => Object.assign(history, { client: [save.players.indexOf(history.client)] }))
     return save
 }
 
