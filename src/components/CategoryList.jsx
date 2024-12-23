@@ -23,17 +23,29 @@ const LocationsCategorized = React.memo(({ category, search, setCheckState, filt
         )
     }, [search, filter, checkedBoxes, isCollapsed, players, setCheckState])
 
-    const totalCompleted = useMemo(() => category.locations.filter((location) => checkedBoxes[location.index]?.checked).length, [category.locations, checkedBoxes])
-    const numberCleared = totalCompleted === category.locations.length ? <span>Fully Cleared</span> : <span>{totalCompleted} / {category.locations.length} complete</span>
 
     if (isCompletelyCleared || !searchFoundLocation) return
 
     return (
         <div className="category">
-            <label className="MapAreaName" onClick={onClicked} style={{color: category.color}}>{category.name} {numberCleared}</label><br/>
+            <label className="MapAreaName" onClick={onClicked} style={{color: category.color}}>
+                {category.name}
+                <LocationsCategorized.TotalCount category={category} checkedBoxes={checkedBoxes} />
+            </label><br/>
             {category.locations.map(mapLocationsToNodes)}
         </div>
     )
 })
+
+LocationsCategorized.TotalCount = function TotalCount({ category, checkedBoxes }) {
+    const isLocationChecked = useCallback((location) => checkedBoxes[location.index]?.checked, [checkedBoxes])
+    const totalCompleted = useMemo(() => category.locations.filter(isLocationChecked).length, [category.locations, isLocationChecked])
+
+    if (category.locations.length === totalCompleted) {
+        return <span>Fully Cleared</span>
+    }
+
+    return <span>{totalCompleted} / {category.locations.length} complete</span>
+}
 
 export default LocationsCategorized
