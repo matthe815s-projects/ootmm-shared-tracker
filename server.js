@@ -128,12 +128,11 @@ function sendData(ws) {
 }
 
 function ValidatePacket(parsed) {
-    console.log(parsed)
     if (Array.isArray(parsed.client)) {
         parsed.client = [...new Set(parsed.client)]
     }
 
-    if (!parsed.index || parsed.checked === undefined) {
+    if (parsed.index == undefined || parsed.checked == undefined) {
         return null
     }
 
@@ -171,11 +170,12 @@ const PacketHandlers = {
             return
         }
 
-        parsed = JSON.stringify(ValidatePacket(parsed))
+        parsed = ValidatePacket(parsed)
         if (parsed === null) {
             console.error("Received invalid packet missing critical information.")
             return
         }
+        parsed = JSON.stringify(parsed)
 
         console.log(`Received message => ${parsed}`)
         broadcast(ws.seed, parsed)
