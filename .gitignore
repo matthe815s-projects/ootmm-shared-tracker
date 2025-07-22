@@ -26,3 +26,4 @@ yarn-error.log*
 
 *.sav
 /.idea
+.idea/workspace.xml

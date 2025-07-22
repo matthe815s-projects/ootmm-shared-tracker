@@ -128,6 +128,7 @@ function sendData(ws) {
 }
 
 function ValidatePacket(parsed) {
+    console.log(parsed)
     if (Array.isArray(parsed.client)) {
         parsed.client = [...new Set(parsed.client)]
     }
