@@ -157,7 +157,7 @@ const PacketHandlers = {
         }
 
         const save = saveManager.get(ws.seed)
-        if (!save.players.includes(ws.username)) {
+        if (save && !save.players.includes(ws.username)) {
             save.push(ws.username)
         }
 
