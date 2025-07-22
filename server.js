@@ -157,8 +157,8 @@ const PacketHandlers = {
         }
 
         const save = saveManager.get(ws.seed)
-        if (save && !save.players.includes(ws.username)) {
-            save.push(ws.username)
+        if (!save.players.includes(ws.username)) {
+            save.players.push(ws.username)
         }
 
         console.log("Synchronizing Client...");
