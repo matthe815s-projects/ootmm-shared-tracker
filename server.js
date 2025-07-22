@@ -127,52 +127,93 @@ function sendData(ws) {
     ws.send(JSON.stringify({ op: 5 }))
 }
 
+function ValidatePacket(parsed) {
+    if (Array.isArray(parsed.client)) {
+        parsed.client = [...new Set(parsed.client)]
+    }
+
+    if (!parsed.index || parsed.checked === undefined) {
+        return null
+    }
+
+    return parsed
+}
+
+const PacketHandlers = {
+    0: (ws, parsed) => {
+        if (parsed.version !== saveManager.serverVersion) {
+            console.log("Received connection from incompatible client.")
+            ws.send(JSON.stringify({}))
+            ws.close()
+            return
+        }
+
+        ws.seed = parsed.seed
+        ws.username = parsed.client
+        console.log(`Client connect with seed: ${ws.seed}`)
+
+        if (!saveManager.has(ws.seed)) {
+            saveManager.load(ws.seed)
+        }
+
+        const save = saveManager.get(ws.seed)
+        if (!save.players.includes(ws.username)) {
+            save.push(ws.username)
+        }
+
+        console.log("Synchronizing Client...");
+        sendData(ws)
+    },
+    1: (ws, parsed) => {
+        if (!ws.seed) {
+            console.log("Received message but client has no seed assigned.")
+            return
+        }
+
+        parsed = JSON.stringify(ValidatePacket(parsed))
+        if (parsed === null) {
+            console.error("Received invalid packet missing critical information.")
+            return
+        }
+
+        console.log(`Received message => ${parsed}`)
+        broadcast(ws.seed, parsed)
+        saveManager.save(ws.seed)
+    },
+    6: (ws, parsed) => {
+        const oldUsername = ws.username
+        ws.username = parsed.client
+
+        const save = saveManager.get(ws.seed)
+        const index = save.players.indexOf(oldUsername)
+        if (index !== -1) {
+            save.players[index] = ws.username
+        }
+
+        broadcast(ws.seed, JSON.stringify({ op: 3 }), false)
+        save.players.forEach((name) => {
+            broadcast(ws.seed, JSON.stringify({ op: 4, name }), false)
+        })
+        broadcast(ws.seed, JSON.stringify({ op: 5 }), false)
+    },
+    7: (ws, parsed) => {}
+}
+
 wss.on("connection", (ws) => {
     console.log("Client connected");
     clients.push(ws);
 
     ws.on('message', (message) => {
-        const parsed = JSON.parse(message)
+        let parsed
 
-        switch (parsed.op) {
-            case 0: // join room
-                if (parsed.version !== saveManager.serverVersion) {
-                    console.log("Received connection from incompatible client.")
-                    ws.send(JSON.stringify({}))
-                    ws.close()
-                    return
-                }
-
-                ws.seed = parsed.seed
-                ws.username = parsed.client
-                console.log(`Received client seed`)
-                if (!saveManager.has(ws.seed)) saveManager.load(ws.seed)
-                if (!saveManager.get(ws.seed).players.includes(ws.username)) saveManager.get(ws.seed).players.push(ws.username)
-                console.log("Synchronizing Client...");
-                sendData(ws)
-                break;
-            case 1: // send check
-                if (!ws.seed) return console.log("Got message but no seed")
-                console.log(`Received message => ${message}`);
-                broadcast(ws.seed, message);
-                saveManager.save(ws.seed)
-                break;
-            case 6: // send username change
-                const oldUsername = ws.username
-                ws.username = parsed.client
-                saveManager.get(ws.seed).players[saveManager.get(ws.seed).players.indexOf(oldUsername)] = parsed.client
-                broadcast(ws.seed, JSON.stringify({ op: 3 }), false);
-                saveManager.get(ws.seed).players.forEach((data) => {
-                    broadcast(ws.seed, JSON.stringify({ op: 4, name: data }), false)
-                })
-                broadcast(ws.seed, JSON.stringify({ op: 5 }), false)
-                break;
-            case 7:
-                // Create room
-                break;
-            default:
-                break;
+        try {
+            parsed = JSON.parse(message);
+        } catch (err) {
+            console.error("Failed to parse message:", message);
+            return;
         }
+
+        PacketHandlers[parsed.op](ws, parsed)
     });
 
     ws.on("close", () => {
